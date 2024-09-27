@@ -12,7 +12,7 @@
     owner: "root"
     group: "root"
   loop:
-    - "{{ voms_dir }}"
+    - "{{ vomsdir_dir }}"
     - "{{ vomses_dir }}"
 
 # Restricts request to supported VO if defined
@@ -23,7 +23,7 @@
 
 - name: Create LSC directories
   file:
-    path: "{{ voms_dir }}/{{ item }}"
+    path: "{{ vomsdir_dir }}/{{ item }}"
     state: directory
     mode: 0755
     owner: "root"
@@ -41,7 +41,7 @@
   when: supported_vos is defined
 - name: Ensure LSC files present
   copy:
-    dest: "{{ voms_dir }}/{{ item.name }}/{{ item.hostname }}.lsc"
+    dest: "{{ vomsdir_dir }}/{{ item.name }}/{{ item.hostname }}.lsc"
     content: |
       {{ item.DN }}
       {{ item.CA_DN }}

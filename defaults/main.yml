@@ -1,8 +1,11 @@
 ---
 # Default variables for VOMS
-voms_dir: /etc/grid-security/vomsdir
-vomses_dir: /etc/vomses
+grid_security_dir: '/etc/grid-security'
+vomsdir_dir: '{{ grid_security_dir }}/vomsdir'
+gridmapdir_dir: '{{ grid_security_dir }}/gridmapdir'
+vomses_dir: '/etc/vomses'
+
 lavoisier:
-  base_url: "https://operations-portal.egi.eu/api"
-  vo_id_card_endpoint: "/vo-voms/json"
+  base_url: 'https://operations-portal.egi.eu/api'
+  vo_id_card_endpoint: '/vo-voms/json'
 voms_data_query: 'data[*]'
