@@ -1,0 +1,113 @@
+supported_vos:
+  - 'belle'
+  - 'biomed'
+  - 'cms'
+  - 'dteam'
+  - 'ops'
+  - 'vo.agata.org'
+  - 'vo.complex-systems.eu'
+  - 'vo.formation.idgrilles.fr'
+  - 'vo.france-grilles.fr'
+  - 'vo.grand-est.fr'
+  - 'vo.sbg.in2p3.fr'
+vo_details:
+  - name: 'biomed'
+    fqan: '/biomed'
+    gid: 3000
+    roles:
+      - name: 'lcgadmin'
+        fqan: '/biomed/Role=lcgadmin'
+        gid: 3001
+  - name: 'belle'
+    fqan: '/belle'
+    gid: 2000
+    roles:
+      - name: 'lcgadmin'
+        fqan: '/belle/Role=lcgadmin'
+        gid: 2001
+      - name: 'production'
+        fqan: '/belle/Role=production'
+        gid: 2002
+  - name: 'cms'
+    fqan: '/cms'
+    gid: 4000
+    roles:
+      - name: 'pilot'
+        fqan: '/cms/Role=pilot'
+        gid: 4001
+      - name: 'lcgadmin'
+        fqan: '/cms/Role=lcgadmin'
+        gid: 4002
+      - name: 'priorityuser'
+        fqan: '/cms/Role=priorityuser'
+        gid: 4003
+      - name: 'production'
+        fqan: '/cms/Role=production'
+        gid: 4004
+  - name: 'dteam'
+    fqan: '/dteam'
+    gid: 5000
+    roles:
+      - name: 'lcgadmin'
+        fqan: '/dteam/Role=lcgadmin'
+        gid: 5001
+      - name: 'production'
+        fqan: '/dteam/production'
+        gid: 5002
+  - name: 'ops'
+    fqan: '/ops'
+    gid: 8000
+    roles:
+      - name: 'lcgadmin'
+        fqan: '/ops/Role=lcgadmin'
+        gid: 8001
+      - name: 'pilot'
+        fqan: '/ops/Role=pilot'
+        gid: 8002
+
+  - name: 'vo.agata.org'
+    fqan: '/vo.agata.org'
+    gid: 9000
+    roles:
+      - name: 'datamaster'
+        fqan: '/vo.agata.org/Role=datamaster'
+        gid: 9001
+  - name: 'vo.complex-systems.eu'
+    fqan: '/vo.complex-systems.eu'
+    gid: 10000
+    roles:
+      - name: 'lcgadmin'
+        fqan: '/vo.complex-systems.eu/Role=lcgadmin'
+        gid: 10001
+  - name: 'vo.formation.idgrilles.fr'
+    fqan: '/vo.formation.idgrilles.fr'
+    gid: 11000
+  - name: 'vo.france-grilles.fr'
+    fqan: '/vo.france-grilles.fr'
+    gid: 12000
+  - name: 'vo.grand-est.fr'
+    fqan: '/vo.grand-est.fr'
+    gid: 13000
+    roles:
+      - name: 'ICS'
+        fqan: '/vo.grand-est.fr/ICS'
+        gid: 13001
+      - name: 'GMGM'
+        fqan: '/vo.grand-est.fr/GMGM'
+        gid: 13002
+      - name: 'ARN'
+        fqan: '/vo.grand-est.fr/ARN'
+        gid: 13003
+      - name: 'IBMP'
+        fqan: '/vo.grand-est.fr/IBMP'
+        gid: 13004
+  - name: 'vo.sbg.in2p3.fr'
+    fqan: '/vo.sbg.in2p3.fr'
+    gid: 14000
+    roles:
+      - name: 'fluka'
+        fqan: '/vo.sbg.in2p3.fr/fluka'
+        gid: 14001
+      - name: 'mcnp'
+        fqan: '/vo.sbg.in2p3.fr/mcnp'
+        gid: 14002

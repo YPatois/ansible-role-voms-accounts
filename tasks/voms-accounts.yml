@@ -1,0 +1,27 @@
+---
+- name: Create gridmapdir directory
+  file:
+    path: {{ gridmapdir_dir }}
+    state: directory
+    owner: root
+    group: root
+    mode: 0770
+
+# Restricts request to supported VO if defined
+- name: Set VOMS data query
+  set_fact:
+    voms_data_query: "data[?{{ [\"name == '\"] | product(supported_vos) | map(\"join\") | product([\"'\"]) | map(\"join\") | join(\"||\") }}]"
+  when: supported_vos is defined
+
+
+
+
+- name: Create gridmapdir accounts
+  copy:
+    dest: "{{ gridmapdir_dir }}/{{ item.key }}"
+    owner: root
+    group: root
+    content: ""
+    mode: 0644
+  with_dict: "{{ grid_users }}"
+

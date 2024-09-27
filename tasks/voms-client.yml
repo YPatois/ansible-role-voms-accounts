@@ -1,0 +1,68 @@
+---
+- name: Get all the VOMS info
+  include_vars:
+    file: "files/data.yml"
+    name: vo_voms
+
+- name: Ensure Required VOMS directories
+  file:
+    path: "{{ item }}"
+    state: "directory"
+    mode: 0755
+    owner: "root"
+    group: "root"
+  loop:
+    - "{{ vomsdir_dir }}"
+    - "{{ vomses_dir }}"
+
+# Restricts request to supported VO if defined
+- name: Set VOMS data query
+  set_fact:
+    voms_data_query: "data[?{{ [\"name == '\"] | product(supported_vos) | map(\"join\") | product([\"'\"]) | map(\"join\") | join(\"||\") }}]"
+  when: supported_vos is defined
+
+- name: Create LSC directories
+  file:
+    path: "{{ vomsdir_dir }}/{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "root"
+    group: "root"
+  loop: "{{ vo_voms | json_query(voms_data_query~'.name') }}"
+
+# LSC files should have the format:
+# certificate DN
+# CA signing authority
+# Path is /etc/vomsdir/vo-name/voms-host.lsc
+
+- name: Print variables
+  debug:
+    msg: "Supported VOs : {{ supported_vos }}"
+  when: supported_vos is defined
+- name: Ensure LSC files present
+  copy:
+    dest: "{{ vomsdir_dir }}/{{ item.name }}/{{ item.hostname }}.lsc"
+    content: |
+      {{ item.DN }}
+      {{ item.CA_DN }}
+    mode: 0644
+    owner: "root"
+    group: "root"
+  loop:
+    "{{ vo_voms | json_query(voms_data_query) | subelements('voms') | to_json |
+    from_json | json_query('[*].{name: [0].name, hostname: [1].hostname, DN:
+    [1].DN, CA_DN: [1].CA_DN}') }}"
+
+- name: Ensure vomses files present
+  copy:
+    dest: "{{ vomses_dir }}/{{ item.name }}-{{ item.hostname }}"
+    content: >
+      "{{ item.name }}" "{{ item.hostname }}" "{{ item.port }}" "{{ item.DN }}"
+      "{{ item.name }}"
+    mode: 0644
+    owner: "root"
+    group: "root"
+  loop:
+    "{{ vo_voms | json_query(voms_data_query) | subelements('voms') | to_json |
+    from_json | json_query('[*].{name: [0].name, hostname: [1].hostname, DN:
+    [1].DN, port: [1].port}') }}"
