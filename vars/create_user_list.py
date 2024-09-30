@@ -17,27 +17,13 @@ import argparse
 MAX_NAME_LENGTH = 32
 def sanitize_name(name):
     # Sanitize the name, removing . - etc
-    name=name.replace('-','_')
-    name=name.replace('.','_')
-
-    if len(name) > MAX_NAME_LENGTH:
-        length = len(name)
-        splitted = name.split('_')
-        if len(splitted) > 1:
-            # just remove a few letters from the inside of each groups but last
-            # to make the name shorter
-            for i in range(len(splitted) - 1):
-                if len(splitted[i]) > 4:
-                    # Remove all but first and last two letters
-                    splitted[i] = splitted[i][:2] + splitted[i][-2:]
-            # concatenate
-            name = ''.join(splitted)
-    # removing underscores too
-    name = name.replace('_','')
-
+    name=name.replace('-','')
+    name=name.replace('.','')
+    name=name.replace('_','')
     if len(name) > MAX_NAME_LENGTH:
         raise ValueError('Name too long: ' + name)
     return name
+
 
 
 class GridGroup:
