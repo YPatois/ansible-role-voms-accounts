@@ -4,7 +4,7 @@
   include_vars:
     file: vars/supported_vos.yaml
  
- - name: Get all the VOMS info
+- name: Get all the VOMS info
   include_vars:
     file: "files/data.yml"
     name: vo_voms
@@ -16,10 +16,10 @@
   when: supported_vos is defined
 
 # Client configuration
-- name: Configure voms client
-  include_tasks: voms-client.yml
-  tags:
-    - all
+#- name: Configure voms client
+#  include_tasks: voms-client.yml
+#  tags:
+#    - all
 
 # Account configuration
 - name: Configure voms accounts

@@ -18,13 +18,28 @@
   include_vars:
     file: 'vars/user_list.yaml'
 
-# Looping over grid_users creating a file with that name
-# and copying it to gridmapdir
-- name: Create gridmapdir accounts
-  file:
-    path: '{{ gridmapdir_dir }}/{{ item.name }}'
-    state: touch
+# Create gridmapdir accounts
+#- name: Create gridmapdir accounts
+#  file:
+#    path: '{{ gridmapdir_dir }}/{{ item.name }}'
+#    state: touch
+#    owner: root
+#    group: root
+#    mode: 0644
+#  loop: '{{ grid_users }}'
+
+# test stuff
+- name: Get test data
+  include_vars:
+    file: 'vars/test.yaml'
+    name: vo_voms_test
+
+# edg-mkgridmap configuration file
+- name: Create edg-mkgridmap configuration file
+  template:
+    src: 'files/edg-mkgridmap.conf.j2'
+    dest: '/etc/edg-mkgridmap.conf'
     owner: root
     group: root
     mode: 0644
-  loop: '{{ grid_users }}'
+
