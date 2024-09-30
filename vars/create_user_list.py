@@ -25,7 +25,6 @@ def sanitize_name(name):
     return name
 
 
-
 class GridGroup:
     def __init__(self, name, gid,vo=None):
         if (not vo):
@@ -218,6 +217,19 @@ def main():
     with open('group_list.yaml', 'w') as f:
         yaml.safe_dump(grid_groups, f, default_flow_style=False, sort_keys=False)
 
+
+def yamltest():
+    myuser={
+        'name': 'biomed000',
+        'uid': 100000,
+        'group': 'biomed000',
+    }
+    mydic={
+        'userlist': [myuser],
+    }
+    # write dictionary in yaml
+    with open('test.yaml', 'w') as f:
+        yaml.safe_dump(mydic, f, default_flow_style=False, sort_keys=False)
 
 if __name__ == "__main__":
     main()
