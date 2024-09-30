@@ -61,11 +61,8 @@ class GridGroup:
 
     def to_yaml(self):
         #self.sanitize_name()
-        return {
-            'name': "Ensuring " + self.name + " group exists",
-            'ansible.builtin.group': 
-                {'name': self.name, 'gid': self.gid, 'state': 'present'}
-        }
+        return {'name': self.name, 'gid': self.gid}
+
 
 
 class GridGroups:
@@ -93,12 +90,17 @@ class GridGroups:
 
 allgroups=GridGroups()
 
+allusers = {}
 class GridUser:
     def __init__(self, name, uid, gid, groups=None):
         self.name = name
         self.uid = uid
         self.gid = gid
         self.groups = groups
+        if (not uid in allusers):
+            allusers[uid] = self
+        else:
+            raise ValueError('Duplicate uid: ' + str(uid))
 
     def sanitize_name(self):
         # Sanitize the name
@@ -141,17 +143,20 @@ class OneRole:
     def generate_user_list(self):
         # Generate a list of users
         user_list = []
+        # uids starts at 100.000 to avoid collisions with other groups
+        uidshift=100000
         # If self.vo is not defined, it's the main group
         # If self.vo is defined, it's a subgroup
+
         if (not hasattr(self, 'vo')):
             # Add users from the main group
             for i in range(200):
-                uid = self.gid + i
+                uid = uidshift + 10*self.gid + i
                 name = self.name + to3digits(i)
                 roles = [self.name]
                 user_list.append(GridUser(name, uid, self.gid))
         else:
-            base_uid=self.vo.gid+500*(self.gid-self.vo.gid)
+            base_uid=uidshift+10*self.vo.gid+500*(self.gid-self.vo.gid)
             for i in range(21):
                 uid = base_uid + i
                 if (i==0):
@@ -216,14 +221,16 @@ def main():
     # Final dictionary for user
     grid_users = {'grid_users': user_list_yaml}
     # Write the user list in yaml
-    with open('../tasks/create_users.yaml', 'w') as f:
+    with open('user_list.yaml', 'w') as f:
         yaml.safe_dump(grid_users, f, default_flow_style=False, sort_keys=False)
     
     # Generate the group list
     group_list_yaml = allgroups.to_yaml()
+    # Final dictionary for group
+    grid_groups = {'grid_groups': group_list_yaml}
     # Write the group list in yaml
-    with open('../tasks/create_groups.yaml', 'w') as f:
-        yaml.safe_dump(group_list_yaml, f, default_flow_style=False, sort_keys=False)
+    with open('group_list.yaml', 'w') as f:
+        yaml.safe_dump(grid_groups, f, default_flow_style=False, sort_keys=False)
 
 
 if __name__ == "__main__":
