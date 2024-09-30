@@ -11,6 +11,7 @@ import yaml
 import json
 import argparse
 
+TESTSTING=True
 
 # Linux user and group names (may be) limited to 32 characters
 # Some chars are not allowed
@@ -127,6 +128,13 @@ class OneRole:
 
     def generate_user_list(self):
         # Generate a list of users
+        if (TESTSTING):
+            main_pool_size = 4
+            pilot_pool_size = 2
+        else:
+            main_pool_size = 200
+            pilot_pool_size = 20
+        
         user_list = []
         # uids starts at 100.000 to avoid collisions with other groups
         uidshift=100000
@@ -135,14 +143,14 @@ class OneRole:
 
         if (not hasattr(self, 'vo')):
             # Add users from the main group
-            for i in range(200):
+            for i in range(main_pool_size):
                 uid = uidshift + 10*self.gid + i
                 name = self.name + to3digits(i)
                 roles = [self.name]
                 user_list.append(GridUser(name, uid, self.gid))
         else:
             base_uid=uidshift+10*self.vo.gid+500*(self.gid-self.vo.gid)
-            for i in range(21):
+            for i in range(pilot_pool_size+1):
                 uid = base_uid + i
                 if (i==0):
                     name = self.vo.name+ '_' + self.name
