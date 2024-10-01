@@ -3,14 +3,14 @@
 # eg 'group ldap://grid-vo.cnaf.infn.it/ou=testbed1,o=infn,c=it .infngrid'
 ##############################################################################
 
-{% for vo in vo_voms_test.data %}
+{% for vo in supported_vo_voms %}
+# {{ vo.name }}
 {% for my_voms in vo.voms %}
 group vomss://{{ my_voms.hostname }}:{{ my_voms.port }}/{{ vo.name }}?/{{ vo.name }} .{{ vo.name  | replace('.','') | replace('-','') }}  
 {% endfor %}
+
 {% endfor %}
 
-# vo.sbg.in2p3.fr
-# group vomss://grid12.lal.in2p3.fr:8443/voms/vo.sbg.in2p3.fr?/vo.sbg.in2p3.fr .sbg
-
+# Local groups
 gmf_local /etc/grid-mapfile-local
 gmf_local /etc/lcmaps/gridmapfile
