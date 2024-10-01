@@ -18,26 +18,31 @@
   include_vars:
     file: 'vars/user_list.yaml'
 
+# Group list
+- name: Get group list
+  include_vars:
+    file: 'vars/group_list.yaml'
+
 # Create gridmapdir accounts
-#- name: Create gridmapdir accounts
-#  file:
-#    path: '{{ gridmapdir_dir }}/{{ item.name }}'
-#    state: touch
-#    owner: root
-#    group: root
-#    mode: 0644
-#  loop: '{{ grid_users }}'
+- name: Create gridmapdir accounts
+  file:
+    path: '{{ gridmapdir_dir }}/{{ item.name }}'
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ grid_users }}'
 
 
 # Dict of supported VOs
 - name: Get supported VOs
   set_fact:
-    supported_vos_dict: "{{ vo_voms | json_query(voms_data_query) }}"
+    supported_vos_dict: '{{ vo_voms | json_query(voms_data_query) }}'
 
 # Install edg-mkgridmap
 - name: Install edg-mkgridmap
   yum:
-    name: edg-mkgridmap
+    name: 'edg-mkgridmap'
     state: latest
 
 # edg-mkgridmap configuration file
@@ -59,3 +64,25 @@
     cron_file: '/etc/cron.d/edg-mkgridmap.cron'
     user: root
 
+# FIXME: in /etc/login.defs UID_MAX and GID_MAX where manually set
+# as the default is only 60000.
+
+# Create groups
+- name: Create groups
+  group:
+    name: '{{ item.name }}'
+    gid: '{{ item.gid }}'
+    state: present
+  loop: '{{ grid_groups }}'
+
+# Create accounts
+- name: Create accounts
+  user:
+    name: '{{ item.name }}'
+    password: '**NP**'
+    uid: '{{ item.uid }}'
+    group: '{{ item.group }}'
+    groups: '{{ item.groups }}'
+    home: '/home/{{ item.name }}'
+    shell: '/bin/bash'
+  loop: '{{ grid_users }}'
