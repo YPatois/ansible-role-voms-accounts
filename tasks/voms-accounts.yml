@@ -28,11 +28,12 @@
 #    mode: 0644
 #  loop: '{{ grid_users }}'
 
-# test stuff
-- name: Get test data
-  include_vars:
-    file: 'vars/test.yaml'
-    name: vo_voms_test
+
+# Dict of supported VOs
+- name: Get supported VOs
+  set_fact:
+    supported_vos_dict: "{{ vo_voms | json_query(voms_data_query) }}"
+
 
 # edg-mkgridmap configuration file
 - name: Create edg-mkgridmap configuration file
