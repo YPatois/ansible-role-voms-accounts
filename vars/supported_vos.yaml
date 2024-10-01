@@ -1,4 +1,5 @@
 supported_vos:
+  - 'alice'
   - 'belle'
   - 'biomed'
   - 'cms'
@@ -11,6 +12,25 @@ supported_vos:
   - 'vo.grand-est.fr'
   - 'vo.sbg.in2p3.fr'
 vo_details:
+  - name: 'alice'
+    fqan: '/alice'
+    gid: 15000
+    roles:
+      - name: 'pilot'
+        fqan: '/alice/Role=pilot'
+        gid: 15001
+      - name: 'root'
+        fqan: '/alice/Role=root'
+        gid: 15002
+      - name: 'production'
+        fqan: '/alice/Role=production'
+        gid: 15003
+      - name: 'lcgadmin'
+        fqan: '/alice/Role=lcgadmin'
+        gid: 15004
+      - name: 'lcg1'
+        fqan: '/alice/lcg1'
+        gid: 15005
   - name: 'biomed'
     fqan: '/biomed'
     gid: 3000
