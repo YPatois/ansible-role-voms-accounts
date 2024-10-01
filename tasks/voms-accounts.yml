@@ -34,6 +34,11 @@
   set_fact:
     supported_vos_dict: "{{ vo_voms | json_query(voms_data_query) }}"
 
+# Install edg-mkgridmap
+- name: Install edg-mkgridmap
+  yum:
+    name: edg-mkgridmap
+    state: latest
 
 # edg-mkgridmap configuration file
 - name: Create edg-mkgridmap configuration file
@@ -43,4 +48,14 @@
     owner: root
     group: root
     mode: 0644
+
+# Generate grid-mapfile from a cron job runnnig every 3 hours
+- name: Generate grid-mapfile
+  cron:
+    name: 'edg-mkgridmap cron job'
+    minute: '46'
+    hour: '0-23/3'
+    job: 'edg-mkgridmap -c /etc/edg-mkgridmap.conf'
+    cron_file: '/etc/cron.d/edg-mkgridmap.cron'
+    user: root
 

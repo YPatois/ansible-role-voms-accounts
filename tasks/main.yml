@@ -15,6 +15,7 @@
     voms_data_query: "data[?{{ [\"name == '\"] | product(supported_vos) | map(\"join\") | product([\"'\"]) | map(\"join\") | join(\"||\") }}]"
   when: supported_vos is defined
 
+
 # Client configuration
 #- name: Configure voms client
 #  include_tasks: voms-client.yml
