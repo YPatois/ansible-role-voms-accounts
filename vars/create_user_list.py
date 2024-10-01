@@ -100,9 +100,9 @@ class GridUser:
         self.sanitize_name()
         maingroup=allgroups.gid_to_name(self.gid)
         if (self.groups == None):
-            return {'name': self.name, 'uid': self.uid, 'group': maingroup}
+            return {'name': self.name, 'uid': self.uid, 'group': maingroup, 'groups': ''}
         secondgroup=allgroups.gid_to_name(self.groups)
-        return {'name': self.name, 'uid': self.uid, 'groups': maingroup+','+ secondgroup}
+        return {'name': self.name, 'uid': self.uid, 'group': maingroup, 'groups': secondgroup}
 
 def to3digits(n):
     s = str(n)
