@@ -3,7 +3,7 @@
 grid_security_dir: '/etc/grid-security'
 vomsdir_dir: '{{ grid_security_dir }}/vomsdir'
 gridmapdir_dir: '{{ grid_security_dir }}/gridmapdir'
-vomses_dir: '/etc/vomses'
+vomses_dir: '/etc/grid-security/vomses'
 
 lavoisier:
   base_url: 'https://operations-portal.egi.eu/api'
