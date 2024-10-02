@@ -1,8 +1,4 @@
 ---
-- name: Get all the VOMS info
-  include_vars:
-    file: "files/data.yml"
-    name: vo_voms
 
 - name: Ensure Required VOMS directories
   file:
@@ -14,12 +10,6 @@
   loop:
     - "{{ vomsdir_dir }}"
     - "{{ vomses_dir }}"
-
-# Restricts request to supported VO if defined
-- name: Set VOMS data query
-  set_fact:
-    voms_data_query: "data[?{{ [\"name == '\"] | product(supported_vos) | map(\"join\") | product([\"'\"]) | map(\"join\") | join(\"||\") }}]"
-  when: supported_vos is defined
 
 - name: Create LSC directories
   file:
