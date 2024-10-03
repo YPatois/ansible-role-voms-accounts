@@ -20,4 +20,5 @@
     groups: '{{ item.groups }}'
     home: '/home/{{ item.name }}'
     shell: '/bin/bash'
+    create_home: '{{ voms_create_user_dir }}'
   loop: '{{ grid_users }}'
