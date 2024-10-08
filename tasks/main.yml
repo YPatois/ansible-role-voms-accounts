@@ -3,54 +3,16 @@
 - name: Get supported VOs info
   include_vars:
     file: 'vars/supported_vos.yaml'
- 
-# Get VOs data from vars/vo/params/{vo_name}.yml
-#- name: Get VOs data
-#  set_fact:
-#    supported_vos_data: "{{ query('ansible.builtin.file', key1=value1, key2=value2, ...)lookup('lookup('file', 'vars/vo/params/{{ item }}.yml') }}"
-#  loop: '{{ supported_vos }}'
-
-#- name : Get VOs data
-#  include_vars:
-#    file: 'vars/vo/params/{{ item }}.yml'
-#    name: '{{ item }}'
-#  loop: '{{ supported_vos }}'
-
 
 - name: Read vo data files in vars
   include_vars:
     file: 'vars/vo/params/{{ item }}.yml'
-    #name: "{{ item }}"
   loop: "{{ supported_vos }}"
   register: supported_vos_data
 
 - name: Combine configs into one dict
   set_fact:
     supported_vos_data_dict: "{{ dict(supported_vos_data.results | json_query('[].[item, ansible_facts]')) }}"
-
-
-#- name: Get VOs data
-#  set_fact:
-#    - include_vars:
-#        file: 'vars/vo/params/{{ item }}.yml'
-#        name: '{{ item }}'
-#    supported_vos_data: "{{ item | lookup('name', 'vars/vo/params/{{ item }}.yml') }}"
-#  loop: '{{ supported_vos }}'
-
-#- name: Get VOs data
-#  set_fact:
-#    supported_vos_data: "{{ supported_vos }}"
-#  loop: '{{ supported_vos }}'
-  
-# debug print supported_vos_data
-- name: Debug print supported_vos_data
-  ansible.builtin.debug:
-    msg: "{{ supported_vos_data }}"
-
-# debug print supported_vos_data_dict
-- name: Debug print supported_vos_data_dict
-  ansible.builtin.debug:
-    msg: "{{ supported_vos_data_dict }}"
 
 # Client configuration
 - name: Configure voms client
