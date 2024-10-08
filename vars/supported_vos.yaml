@@ -2,7 +2,7 @@ supported_vos:
   - 'alice'
   - 'belle'
   - 'biomed'
-  - 'cms'
+  - 'cms'supp
   - 'dteam'
   - 'ops'
   - 'vo.agata.org'
@@ -11,4 +11,3 @@ supported_vos:
   - 'vo.france-grilles.fr'
   - 'vo.grand-est.fr'
   - 'vo.sbg.in2p3.fr'
-  

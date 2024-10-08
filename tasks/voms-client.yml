@@ -18,7 +18,7 @@
     mode: 0755
     owner: "root"
     group: "root"
-  loop: "{{ vo_voms | json_query(voms_data_query~'.name') }}"
+  loop: "{{ supported_vos }}"
 
 # LSC files should have the format:
 # certificate DN
@@ -39,9 +39,7 @@
     owner: "root"
     group: "root"
   loop:
-    "{{ vo_voms | json_query(voms_data_query) | subelements('voms') | to_json |
-    from_json | json_query('[*].{name: [0].name, hostname: [1].hostname, DN:
-    [1].DN, CA_DN: [1].CA_DN}') }}"
+    "{{ supported_vos_data_dict | subelements('voms_servers') | to_json |}}"
 
 - name: Ensure vomses files present
   copy:
