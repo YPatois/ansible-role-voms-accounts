@@ -2,7 +2,7 @@ supported_vos:
   - 'alice'
   - 'belle'
   - 'biomed'
-  - 'cms'supp
+  - 'cms'
   - 'dteam'
   - 'ops'
   - 'vo.agata.org'
