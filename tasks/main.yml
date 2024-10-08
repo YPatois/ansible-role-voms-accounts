@@ -4,6 +4,8 @@
   include_vars:
     file: 'vars/supported_vos.yaml'
 
+# VO data reading, a bit complex with three operations
+# Can likely be simplified.
 - name: Read vo data files in vars
   include_vars:
     file: 'vars/vo/params/{{ item }}.yml'
@@ -13,6 +15,10 @@
 - name: Combine configs into one dict
   set_fact:
     supported_vos_data_dict: "{{ dict(supported_vos_data.results | json_query('[].[item, ansible_facts]')) }}"
+
+- name: Combine configs into one list
+  set_fact:
+    supported_vos_data_list: "{{ supported_vos_data_dict | dict2items | map(attribute='value') }}"
 
 # Client configuration
 - name: Configure voms client
