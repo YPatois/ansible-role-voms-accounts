@@ -1,5 +1,4 @@
 ---
-
 - name: Ensure Required VOMS directories
   file:
     path: "{{ item }}"
@@ -20,37 +19,85 @@
     group: "root"
   loop: "{{ supported_vos }}"
 
+#- name: debug stuff1
+#  debug:
+#    msg: "{{ item }}"
+#  loop:
+#    "{{ supported_vos_data_list }}"
+
+#- name: debug stuff1.1
+#  debug:
+#    msg: "{{ item }}"
+#  loop:
+#    "{{ supported_vos_data_list }}"
+
+#- name: debug stuff2
+#  debug:
+#    msg: "{{ item.name }}"
+#  loop:
+#    "{{ supported_vos_data_list }}"
+
+# - name: debug stuff3
+#   debug:
+#     msg: "{{ item }}"
+#   loop:
+#     "{{ supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
+
+# Unable to filter on subelements, first creating a list of all voms servers, by developping the lists
+# - name: All voms servers
+#   set_fact:
+#     voms_data_list_all: "{{ supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
+
+# # debug stuff4
+# - name: debug stuff4
+#   debug:
+#     msg: "{{ item }}"
+#   loop:
+#     "{{ voms_data_list_all }}"
+
+# # Create list of all voms servers
+# - name: Create list of all voms servers
+#   set_fact:
+#     voms_servers: "{{ voms_servers | default([]) + [item] }}"
+#   loop: "{{ voms_data_list_all }}"
+#   when:
+#     voms_data_list_all[1].type is not defined
+
+# # debug stuff4
+# - name: debug stuff4
+#   debug:
+#     msg: "{{ item }}"
+#   loop:
+#     "{{ voms_data_list_all }}"
+
+- name: Ensure LSC files present
+  copy:
+    dest: "{{ vomsdir_dir }}/{{ item.0.name }}/{{ item.1.name }}.lsc"
+    content: |
+      {{ item.1.DN  }}
+      {{ item.1.CA_DN }}
+    mode: 0644
+    owner: "root"
+    group: "root"
+  loop:
+    "{{ supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
+  when: 
+    item.1.DN is defined
+
 # LSC files should have the format:
 # certificate DN
 # CA signing authority
 # Path is /etc/vomsdir/vo-name/voms-host.lsc
-
-- name: Print variables
-  debug:
-    msg: "Supported VOs : {{ supported_vos }}"
-  when: supported_vos is defined
-- name: Ensure LSC files present
-  copy:
-    dest: "{{ vomsdir_dir }}/{{ item.name }}/{{ item.hostname }}.lsc"
-    content: |
-      {{ item.DN }}
-      {{ item.CA_DN }}
-    mode: 0644
-    owner: "root"
-    group: "root"
-  loop:
-    "{{ supported_vos_data_dict | subelements('voms_servers') | to_json |}}"
-
 - name: Ensure vomses files present
   copy:
-    dest: "{{ vomses_dir }}/{{ item.name }}-{{ item.hostname }}"
+    dest: "{{ vomses_dir }}/{{ item.0.name }}-{{ item.1.name }}"
     content: >
-      "{{ item.name }}" "{{ item.hostname }}" "{{ item.port }}" "{{ item.DN }}"
-      "{{ item.name }}"
+      "{{ item.0.name }}" "{{ item.1.host }}" "{{ item.1.port }}" "{{ item.1..DN }}"
+      "{{ item.0.name }}"
     mode: 0644
     owner: "root"
     group: "root"
   loop:
-    "{{ vo_voms | json_query(voms_data_query) | subelements('voms') | to_json |
-    from_json | json_query('[*].{name: [0].name, hostname: [1].hostname, DN:
-    [1].DN, port: [1].port}') }}"
+    "{{ supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
+  when: 
+    item.voms_servers.DN is defined
