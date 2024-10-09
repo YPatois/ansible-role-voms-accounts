@@ -1,0 +1,54 @@
+---
+- name: Create gridmapdir directory
+  file:
+    path: '{{ gridmapdir_dir }}'
+    state: directory
+    owner: 'root'
+    group: 'root'
+    mode: 0770
+
+# Create gridmapdir accounts
+- name: Create gridmapdir accounts
+  file:
+    path: '{{ gridmapdir_dir }}/{{ item.name }}'
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+  loop: '{{ grid_users }}'
+
+# Install edg-mkgridmap
+- name: Install edg-mkgridmap
+  yum:
+    name: 'edg-mkgridmap'
+    state: latest
+
+# edg-mkgridmap configuration file
+# FIXME: should be in templates
+- name: Create edg-mkgridmap configuration file
+  template:
+    src: 'files/edg-mkgridmap.conf.j2'
+    dest: '/etc/edg-mkgridmap.conf'
+    owner: root
+    group: root
+    mode: 0644
+
+# Generate grid-mapfile from a cron job runnnig every 3 hours
+# FIXME: static grid-mapfile for now
+#- name: Generate grid-mapfile
+#  cron:
+#    name: 'edg-mkgridmap cron job'
+#    minute: '46'
+#    hour: '0-23/3'
+#    job: 'edg-mkgridmap -c /etc/edg-mkgridmap.conf'
+#    cron_file: '/etc/cron.d/edg-mkgridmap.cron'
+#    user: root
+
+# Static grid-mapfile
+- name: Static grid-mapfile
+  template:
+    src: 'templates/grid-mapfile.j2'
+    dest: '/etc/grid-security/grid-mapfile'
+    owner: root
+    group: root
+    mode: 0644
