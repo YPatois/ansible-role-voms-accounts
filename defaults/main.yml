@@ -5,7 +5,11 @@ vomsdir_dir: '{{ grid_security_dir }}/vomsdir'
 gridmapdir_dir: '{{ grid_security_dir }}/gridmapdir'
 vomses_dir: '/etc/grid-security/vomses'
 
+vo_pool_accounts_count: 10
+group_pool_accounts_count: 2
+
 lavoisier:
   base_url: 'https://operations-portal.egi.eu/api'
   vo_id_card_endpoint: '/vo-voms/json'
 voms_data_query: 'data[*]'
+

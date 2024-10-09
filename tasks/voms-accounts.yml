@@ -9,57 +9,27 @@
     gid: '{{ item.base_uid }}'
     state: present
   loop: '{{ supported_vos_data_list }}'
-
-# Nested groups for each VO
-#- name: Create nested groups
-#  group:
-#    name: '{{ item.0.name }}{{ item.1.suffix }}'
-#    gid: '{{ item.0.base_uid + ansible_loop.index }}'
-#    state: present
-#  loop: '{{ voms_mapping }}'
-#  loop_control:
-#    extended: true
-
+  tags:
+    - toto
 
 # Create VO subgroups
 - name: Create VO subgroups
   group:
-    name: '{{ item.0.name }}{{ item.1.suffix2 }}'
-    gid: '{{ item.0.base_uid +  1000 * ( item.0.voms_mappings.index(item.1) + 1 ) }}'
+    name: '{{ item.0.account_prefix}}{{ item.1.suffix }}'
+    gid: '{{ item.0.base_uid +  1 * ( item.0.voms_mappings.index(item.1) + 1 ) }}'
     state: present
   loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
   loop_control:
     extended: true
+  tags:
+    - toto
 
-
-# Create VO Main accounts
-- name: Create VO main accounts
-  user:
-    name: '{{ item.name }}' # FIXME: name or prefix ? Or even custom ?
-    password: '**NP**'
-    uid: '{{ item.uid }}'
-    group: '{{ item.name }}'
-    home: '/home/{{ item.name }}'
-    comment: 'Main user of VO {{ item.name }}'
-    shell: '/bin/bash'
-    create_home: '{{ voms_create_user_dir }}'
-  loop: '{{ supported_vos_data_list }}'
-
-
-# Create VO Main accounts pool
-- name: Create VO main accounts pool
-  user:
-    name: '{{ item.account_prefix }}{{ "%02d" | format(ansible_loop.index + 1 ) }}' 
-    password: '**NP**'
-    uid: '{{ item.base_uid + ansible_loop.index + 1 }}'
-    group: '{{ item.name }}'
-    home: '/home/{{ user.name }}'
-    comment: 'Main pool of VO {{ item.name }}'
-    shell: '/bin/bash'
-    create_home: '{{ voms_create_user_dir }}'
+# Create VO pool accounts
+- name: Create VO main pool accounts
+  include_tasks: 'tasks/create_pool_accounts.yml' 
   loop: '{{ supported_vos_data_list }}'
   loop_control:
-    extended: true
+    loop_var: '_vodata'
 
 # Create VO subgroups pools
 - name: Create VO subgroups pools
