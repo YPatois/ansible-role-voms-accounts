@@ -4,11 +4,17 @@
   include_vars:
     file: 'vars/supported_vos.yaml'
 
+# Dynamic generation of VO data from EGI API
+- name: Generate VO data
+  local_action: command {{ role_path }}/scripts/generates_yaml_vo_data.sh
+  #./scripts/generates_yaml_vo_data.sh
+
+
 # VO data reading, a bit complex with three operations
 # Can likely be simplified.
 - name: Read vo data files in vars
   include_vars:
-    file: 'vars/vo/params/{{ item }}.yml'
+    file: 'generated_vars/vo/params/{{ item }}.yml'
   loop: "{{ supported_vos }}"
   register: supported_vos_data
 
