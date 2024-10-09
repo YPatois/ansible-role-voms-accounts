@@ -6,7 +6,7 @@
     uid: '{{ _vodata.base_uid + 1 * ansible_loop.index }}'
     group: '{{ _vodata.name }}'
     comment: 'VO {{ _vodata.name }} pool account user'
-    home: '/home/{{ name }}'
+    home: '/home/{{ _vodata.account_prefix }}{{ "%03d" | format(ansible_loop.index) }}'
     shell: '/bin/bash'
     create_home: '{{ voms_create_user_dir }}'
   loop: "{{ range(0 , vo_pool_accounts_count)  | list }}"

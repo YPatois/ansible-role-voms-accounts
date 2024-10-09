@@ -15,12 +15,16 @@ supported_vos:
 local_vo_params:
   - name: alice
     account_prefix: ali
+  - name: belle
+    account_prefix: bel
   - name: biomed
     account_prefix: bio
   - cms:
     account_prefix: cms
   - name: dteam
     account_prefix: dte
+  - name: ops
+    account_prefix: ops
   - name: vo.agata.org
     account_prefix: aga
   - name: vo.complex-systems.eu

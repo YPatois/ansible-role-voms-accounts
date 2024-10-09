@@ -9,8 +9,6 @@
     gid: '{{ item.base_uid }}'
     state: present
   loop: '{{ supported_vos_data_list }}'
-  tags:
-    - toto
 
 # Create VO subgroups
 - name: Create VO subgroups
@@ -21,8 +19,6 @@
   loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
   loop_control:
     extended: true
-  tags:
-    - toto
 
 # Create VO pool accounts
 - name: Create VO main pool accounts
