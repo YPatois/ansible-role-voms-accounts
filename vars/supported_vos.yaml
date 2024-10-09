@@ -23,6 +23,8 @@ local_vo_params:
     account_prefix: dte
   - name: vo.agata.org
     account_prefix: aga
+  - name: vo.complex-systems.eu
+    account_prefix: comsya
   - name: vo.formation.idgrilles.fr
     account_prefix: formid
   - name: vo.france-grilles.fr
