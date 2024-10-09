@@ -27,10 +27,10 @@
     - all
 
 # Gridmap configuration
-- name: Configure voms gridmap
-  include_tasks: 'voms-gridmap.yml'
-  tags:
-    - ce_arc
+#- name: Configure voms gridmap
+#  include_tasks: 'voms-gridmap.yml'
+#  tags:
+#    - ce_arc
 
 # Account configuration
 - name: Configure voms accounts
