@@ -21,13 +21,13 @@ local_vo_params:
     account_prefix: cms
   - name: dteam
     account_prefix: dte
-  - vo.agata.org:
+  - name: vo.agata.org:
     account_prefix: aga
-  - vo.formation.idgrilles.fr:
+  - name: vo.formation.idgrilles.fr:
     account_prefix: formid
-  - vo.france-grilles.fr:
+  - name: vo.france-grilles.fr:
     account_prefix: fragri
-  - vo.grand-est.fr:
+  - name: vo.grand-est.fr:
     account_prefix: gratcc
-  - vo.sbg.in2p3.fr:
+  - name: vo.sbg.in2p3.fr:
     account_prefix: sbg
