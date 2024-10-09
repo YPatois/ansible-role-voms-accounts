@@ -7,9 +7,7 @@
 # Dynamic generation of VO data from EGI API
 - name: Generate VO data
   local_action: command {{ role_path }}/scripts/generates_yaml_vo_data.sh
-  #./scripts/generates_yaml_vo_data.sh
-
-
+  
 # VO data reading, a bit complex with three operations
 # Can likely be simplified.
 - name: Read vo data files in vars
@@ -18,13 +16,20 @@
   loop: "{{ supported_vos }}"
   register: supported_vos_data
 
+# Next step
 - name: Combine configs into one dict
   set_fact:
     supported_vos_data_dict: "{{ dict(supported_vos_data.results | json_query('[].[item, ansible_facts]')) }}"
 
+# Next step
 - name: Combine configs into one list
   set_fact:
     supported_vos_data_list: "{{ supported_vos_data_dict | dict2items | map(attribute='value') }}"
+
+# Final step: combining with our local data
+- name: Combine with local parameters
+  set_fact:
+    supported_vos_data_list: "{{ supported_vos_data_list | community.general.lists_mergeby(local_vo_params, 'name') }}"
 
 # Client configuration
 - name: Configure voms client
