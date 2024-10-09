@@ -11,3 +11,21 @@ supported_vos:
   - 'vo.france-grilles.fr'
   - 'vo.grand-est.fr'
   - 'vo.sbg.in2p3.fr'
+
+local_vo_params:
+  - name: alice
+    account_prefix: alis
+  - cms:
+    account_prefix: cms
+  - vo.agata.org:
+    account_prefix: agata
+  - vo.complex-systems.eu:
+    account_prefix: complex
+  - vo.formation.idgrilles.fr:
+    account_prefix: formation
+  - vo.france-grilles.fr:
+    account_prefix: fragri
+  - vo.grand-est.fr:
+    account_prefix: grest
+  - vo.sbg.in2p3.fr:
+    account_prefix: sbg
