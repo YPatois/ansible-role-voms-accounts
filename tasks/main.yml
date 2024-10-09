@@ -35,7 +35,7 @@
 - name: Configure voms client
   include_tasks: 'voms-client.yml'
   tags:
-    - all
+    - toto
 
 # Gridmap configuration
 #- name: Configure voms gridmap

@@ -14,18 +14,20 @@ supported_vos:
 
 local_vo_params:
   - name: alice
-    account_prefix: alis
+    account_prefix: ali
+  - name: biomed
+    account_prefix: bio
   - cms:
     account_prefix: cms
+  - name: dteam
+    account_prefix: dte
   - vo.agata.org:
-    account_prefix: agata
-  - vo.complex-systems.eu:
-    account_prefix: complex
+    account_prefix: aga
   - vo.formation.idgrilles.fr:
-    account_prefix: formation
+    account_prefix: formid
   - vo.france-grilles.fr:
     account_prefix: fragri
   - vo.grand-est.fr:
-    account_prefix: grest
+    account_prefix: gratcc
   - vo.sbg.in2p3.fr:
     account_prefix: sbg
