@@ -1,0 +1,15 @@
+# Called from tasks/voms-accounts.yml
+# Iterates over a VO to create pool accounts
+- name: Create VO grps pool accounts
+  user:
+    name: '{{ _vodata.0.account_prefix }}{{ _vodata.1.suffix }}{{ "%03d" | format(ansible_loop.index) }}'
+    uid: '{{ _vodata.0.base_uid + 1000 * ( _vodata.0.voms_mappings.index(_vodata.1) + 1 ) + ansible_loop.index }}'
+    group: '{{ _vodata.0.account_prefix }}{{ _vodata.1.suffix }}'
+    comment: 'VO {{ _vodata.0.name }}, {{ _vodata.1.description }} pool account user'
+    home: '/home/{{ name }}'
+    shell: '/bin/bash'
+    create_home: '{{ voms_create_user_dir }}'
+  loop: "{{ range(0 , group_pool_accounts_count)  | list }}"
+  loop_control:
+    extended: true
+

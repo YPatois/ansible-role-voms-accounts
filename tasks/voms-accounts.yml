@@ -33,15 +33,8 @@
 
 # Create VO subgroups pools
 - name: Create VO subgroups pools
-  user:
-    name: '{{ item.account_prefix }}{{ "%02d" | format(item.0.voms_mappings.index(item.1) + 1 ) }}' 
-    password: '**NP**'
-    uid: '{{ item.base_uid +  1000 * ( item.0.voms_mappings.index(item.1) + 1 ) }}'
-    group: '{{ item.0.name }}{{ item.1.suffix2 }}'
-    home: '/home/{{ user.name }}'
-    comment: 'Pool of VO {{ item.0.name }} subgroups'
-    shell: '/bin/bash'
-    create_home: '{{ voms_create_user_dir }}'
+  include_tasks: 'tasks/create_vo_grp_pool_accounts.yml'
   loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
   loop_control:
-    extended: true
+    loop_var: '_vodata'
+
