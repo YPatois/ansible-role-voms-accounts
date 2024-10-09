@@ -395,7 +395,7 @@ def write_vo_template_ansible(vo_details, basedir, namespaces):
     data['voms_mappings'] = []
     legacy_suffix = []
     for mapping in vo_details['voms_mapping']:
-        suffix = get_legacy_suffix(vo_details['id'], mapping, [], legacy_suffix)
+        suffix = get_legacy_suffix(vo_details['id'], mapping, legacy_suffix)
         legacy_suffix.append(suffix)
         suffix2 = get_account_suffix(vo_details['name'], mapping)   
         data['voms_mappings'].append({'description': mapping['desc'],
