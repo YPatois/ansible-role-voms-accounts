@@ -34,18 +34,16 @@
 # Client configuration
 - name: Configure voms client
   include_tasks: 'voms-client.yml'
-  tags:
-    - toto
-
-# Gridmap configuration
-#- name: Configure voms gridmap
-#  include_tasks: 'voms-gridmap.yml'
-#  tags:
-#    - ce_arc
-
+ 
 # Account configuration
 - name: Configure voms accounts
   include_tasks: 'voms-accounts.yml'
-  tags:
-    - ce_arc
-    - grid_wn
+  when:
+    - "'ce_arc' in group_names or 'grid_wn' in group_names"
+
+# Gridmap configuration
+- name: Configure voms gridmap
+  include_tasks: 'voms-gridmap.yml'
+  when:
+    - "'ce_arc' in group_names"
+
