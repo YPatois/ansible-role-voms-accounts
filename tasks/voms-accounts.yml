@@ -83,7 +83,7 @@
 # Expends grid_user list with items from _grid_users.results when name is defined
 - name: Expends grid_user list with items from _grid_users.results when name is defined
   set_fact:
-    grid_users: "{{ grid_users + _grid_users.results | selectattr('name', 'defined') }}"
+    grid_users: "{{ grid_users + _grid_users.results | selectattr('invocation', 'defined') | map(attribute='invocation.module_args') }}"
 
 # Debug print _grid_users.results.name
 #- name: Debug print _grid_users.results items
@@ -134,4 +134,10 @@
 # Expends grid_user list with items from _grid_users.results when name is defined
 - name: Expends grid_user list with items from _grid_users.results when name is defined
   set_fact:
-    grid_users: "{{ grid_users + _grid_users.results | selectattr('name', 'defined') }}"
+    grid_users: "{{ grid_users + (_grid_users.results | selectattr('invocation', 'defined') | map(attribute='invocation.module_args')) }}"
+
+
+# debug print grid_users
+- name: debug print grid_users
+  debug:
+    msg: "{{ grid_users }}"
