@@ -2,6 +2,10 @@
 # FIXME: in /etc/login.defs UID_MAX and GID_MAX where manually set
 # as the default is only 60000.
 
+- name: Empty list of grid users
+  set_fact:
+    grid_users: []
+
 # Create VO main groups
 - name: Create vo groups
   group:
@@ -9,7 +13,7 @@
     gid: '{{ item.base_uid }}'
     state: present
   loop: '{{ supported_vos_data_list }}'
-
+ 
 # Create VO subgroups
 - name: Create VO subgroups
   group:
@@ -19,18 +23,115 @@
   loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
   loop_control:
     extended: true
-
+ 
 # Create VO pool accounts
 - name: Create VO main pool accounts
   include_tasks: 'tasks/create_pool_accounts.yml' 
   loop: '{{ supported_vos_data_list }}'
   loop_control:
     loop_var: '_vodata'
-
-# Create VO subgroups pools
-- name: Create VO subgroups pools
+ 
+# Create VO roles pools, but avoid SW manager and pilot roles
+- name: Create VO roles pools
   include_tasks: 'tasks/create_vo_grp_pool_accounts.yml'
-  loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
+  loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True")}}'
   loop_control:
     loop_var: '_vodata'
+  when: _vodata.1.description != 'SW manager' and _vodata.1.description != "pilot"
+  
+# Create VOs sw manager role account
+- name: Create VO sw manager account
+  user:
+    name: '{{ item.0.account_prefix }}{{ item.1.suffix }}'
+    uid: '{{ item.0.base_uid +  1 }}'
+    group: '{{ item.0.name }}'
+    state: present
+    comment: 'VO {{ item.0.name }} - {{ item.1.description }} account'
+    shell: /bin/bash
+    home: '/home/{{ item.0.account_prefix }}{{ item.1.suffix }}'
+    create_home: '{{ voms_create_user_dir }}'
 
+  loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True")}}'
+  when:
+    item.1.description == 'SW manager'
+  register: _grid_users
+
+# debug print _grid_users
+#- name: debug print _grid_users
+#  debug:
+#    msg: "{{ _grid_users }}"  
+
+# Which type is the _grid_users.results object?
+#- name: debug print _grid_users.results
+#  debug:
+#    msg: "{{ _grid_users.results }}"
+
+
+# Debug print _grid_users.results items
+#- name: Debug print _grid_users.results items types
+#  debug:
+#    msg: " {{ item | type_debug}}"
+#  loop: "{{ _grid_users.results }}"
+
+# Debug print _grid_users.results items
+#- name: Debug print _grid_users.results items
+#  debug:
+#    msg: " {{ item }}"
+#  loop: "{{ _grid_users.results }}"
+
+
+# Expends grid_user list with items from _grid_users.results when name is defined
+- name: Expends grid_user list with items from _grid_users.results when name is defined
+  set_fact:
+    grid_users: "{{ grid_users + _grid_users.results | selectattr('name', 'defined') }}"
+
+# Debug print _grid_users.results.name
+#- name: Debug print _grid_users.results items
+#  debug:
+#    msg: " {{ item.name }}"
+#  loop: "{{ _grid_users.results }}"
+#  when: "item.name is defined"
+
+# Create list of grid users that exists
+#- name: Create list of grid users that exists
+#  set_fact:
+#    grid_users_exists: "{{ _grid_users.results | map(attribute='name') }}"
+
+
+
+# Next step: combine _grid_users into one dictionary
+#- name: Combine _grid_users into one dictionary
+#  set_fact:
+#    _grid_users_dict: "{{ dict(_grid_users.results | json_query('[].[item, invocation.module_args]')) }}"
+
+# Convert _grid_users_dict to list
+#- name: Convert _grid_users_dict to list
+#  set_fact:
+#    _grid_users_list: "{{ _grid_users_dict | dict2items | map(attribute='value') }}" 
+
+# Concatenate created accounts with existing accounts
+#- name: Concatenate pool accounts with existing accounts
+#  set_fact:
+#    grid_users: "{{ grid_users + _grid_users_list }}"
+
+
+# Create VOs pilot role account
+- name: Create VO production account
+  user:
+    name: '{{ item.0.account_prefix }}{{ item.1.suffix }}'
+    uid: '{{ item.0.base_uid +  2 }}'
+    group: '{{ item.0.name }}'
+    state: present
+    comment: 'VO {{ item.0.name }} - {{ item.1.description }} account'
+    shell: /bin/bash
+    home: '/home/{{ item.0.account_prefix }}{{ item.1.suffix }}'
+    create_home: '{{ voms_create_user_dir }}'
+
+  loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True")}}'
+  when: item.1.description == 'pilot'
+  register: _grid_users
+
+# Expends grid_user list with items from _grid_users.results when name is defined
+- name: Expends grid_user list with items from _grid_users.results when name is defined
+  set_fact:
+    grid_users: "{{ grid_users + _grid_users.results | selectattr('name', 'defined') }}"
