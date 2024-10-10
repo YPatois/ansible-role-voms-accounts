@@ -3,7 +3,7 @@
 - name: Create pool accounts
   user:
     name: '{{ _vodata.account_prefix }}{{ "%03d" | format(ansible_loop.index) }}'
-    uid: '{{ _vodata.base_uid + 1 * ansible_loop.index }}'
+    uid: '{{ _vodata.base_uid + 1000 + ansible_loop.index }}'
     group: '{{ _vodata.name }}'
     comment: 'VO {{ _vodata.name }} pool account user'
     home: '/home/{{ _vodata.account_prefix }}{{ "%03d" | format(ansible_loop.index) }}'
@@ -12,4 +12,19 @@
   loop: "{{ range(0 , vo_pool_accounts_count)  | list }}"
   loop_control:
     extended: true
+  register: _grid_users
 
+# Next step: combine _grid_users into one dictionary
+- name: Combine _grid_users into one dictionary
+  set_fact:
+    _grid_users_dict: "{{ dict(_grid_users.results | json_query('[].[item, invocation.module_args]')) }}"
+
+# Convert _grid_users_dict to list
+- name: Convert _grid_users_dict to list
+  set_fact:
+    _grid_users_list: "{{ _grid_users_dict | dict2items | map(attribute='value') }}" 
+
+# Concatenate created accounts with existing accounts
+- name: Concatenate pool accounts with existing accounts
+  set_fact:
+    grid_users: "{{ grid_users + _grid_users_list }}"
