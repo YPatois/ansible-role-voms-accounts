@@ -39,5 +39,5 @@
 - name: Configure voms accounts
   include_tasks: 'voms-accounts.yml'
   when:
-    - "'arc_ce' in group_names or 'grid_wn' in group_names"
+    - "'ce_arc' in group_names or 'grid_wn' in group_names"
 
