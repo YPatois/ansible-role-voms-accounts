@@ -41,3 +41,9 @@
   when:
     - "'ce_arc' in group_names or 'grid_wn' in group_names"
 
+# Slurm configuration
+- name: Configure slurm accounts
+  include_tasks: 'voms-slurm-sacctmgr.yml'
+  when:
+    - "'ce_arc' in group_names"
+
