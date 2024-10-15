@@ -1,0 +1,22 @@
+Cluster - '{{ slurm_sitename }}':Fairshare=1:QOS='normal'
+Parent - 'root'
+
+# VO groups
+{% for vo in supported_vos_data_list %}
+{% if vo.fairshare is defined %}
+Account - '{{ vo.name }}':Description='VO group for {{ vo.name }} vo':Organization='{{ vo.name }}':Fairshare= {{ vo.fairshare }}
+{% else %}
+Account - '{{ vo.name }}':Description='VO group for {{ vo.name }} vo':Organization='{{ vo.name }}':Fairshare=1
+{% endif %}
+{% endfor %}
+
+# User pools
+{% for vo in supported_vos_data_list %}
+# For {{ vo.name }}
+{% for i in range(1,vo_pool_accounts_count+1) %}
+User - '{{ vo.account_prefix }}{{ "%03d" | format(i) }}':DefaultAccount='{{ vo.name }}':Fairshare=parent
+{% endfor %}
+
+{% endfor %}
+
+# FIXME: Fairshare has to be set properly, role accounts are not created yet
