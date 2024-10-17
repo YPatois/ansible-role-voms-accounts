@@ -1,0 +1,28 @@
+---
+# Called from tasks/voms-accounts.yml
+
+# debug print _voms_mapping
+- name: Debug print _voms_mapping
+  debug:
+    msg: "{{ _voms_mapping.1 }}"
+
+
+# debug print _voms_mapping subelements items
+- name: Debug print _voms_mapping subelements items
+  debug: 
+    msg: "{{ item.1 }}"
+  loop: "{{ _voms_mapping | subelements('pool_accounts', skip_missing=True) }}" 
+
+
+# Iterates over a VO to create pool accounts
+- name: Create pool accounts
+  user:
+    name: '{{ item.1.account }}'
+    uid: '{{ item.1.uid }}'
+    group: '{{ item.0.group }}'
+    groups: '{{ _voms_mapping.0.group }}'
+    comment: 'VO {{ _voms_mapping.0.group }} Role {{ _voms_mapping.1.description }} pool account user'
+    home: '/home/{{ item.1.account }}'
+    shell: '/bin/bash'
+    create_home: '{{ voms_create_user_dir }}'
+  loop: "{{ _voms_mapping | subelements('pool_accounts', skip_missing=True) }}"

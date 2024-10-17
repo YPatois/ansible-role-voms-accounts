@@ -2,88 +2,51 @@
 # FIXME: in /etc/login.defs UID_MAX and GID_MAX where manually set
 # as the default is only 60000.
 
-- name: Empty list of grid users
-  set_fact:
-    grid_users: []
-
 # Create VO main groups
 - name: Create vo groups
   group:
-    name: '{{ item.name }}'
-    gid: '{{ item.base_uid }}'
+    name: '{{ item.group }}'
+    gid: '{{ item.gid }}'
     state: present
-  loop: '{{ supported_vos_data_list }}'
- 
+  loop: '{{ gridsite_supported_vos_data_list }}'
+
+# debug print gridsite_supported_vos_data_list
+- name: Debug print gridsite_supported_vos_data_list
+  debug:
+    msg: "{{ gridsite_supported_vos_data_list }}"
+
+
 # Create VO subgroups
 - name: Create VO subgroups
   group:
-    name: '{{ item.0.account_prefix}}{{ item.1.suffix }}'
-    gid: '{{ item.0.base_uid +  1 * ( item.0.voms_mappings.index(item.1) + 1 ) }}'
+    name: '{{ item.1.group }}'
+    gid: '{{ item.1.gid }}'
     state: present
-  loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
-  loop_control:
-    extended: true
+  loop: '{{ gridsite_supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
  
 # Create VO pool accounts
 - name: Create VO main pool accounts
-  include_tasks: 'tasks/create_pool_accounts.yml' 
-  loop: '{{ supported_vos_data_list }}'
-  loop_control:
-    loop_var: '_vodata'
- 
-# Create VO roles pools, but avoid SW manager and pilot roles
-- name: Create VO roles pools
-  include_tasks: 'tasks/create_vo_grp_pool_accounts.yml'
-  loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True")}}'
-  loop_control:
-    loop_var: '_vodata'
-  when: _vodata.1.description != 'SW manager' and _vodata.1.description != "pilot"
-  
-# Create VOs sw manager role account
-- name: Create VO sw manager account
   user:
-    name: '{{ item.0.account_prefix }}{{ item.1.suffix }}'
-    uid: '{{ item.0.base_uid +  1 }}'
-    group: '{{ item.0.name }}'
+    name: '{{ item.1.account }}'
+    uid: '{{ item.1.uid }}'
+    group: '{{ item.0.group }}'
     state: present
-    comment: 'VO {{ item.0.name }} - {{ item.1.description }} account'
+    comment: 'VO {{ item.0.name }} pool account'
     shell: /bin/bash
-    home: '/home/{{ item.0.account_prefix }}{{ item.1.suffix }}'
+    home: '/home/{{ item.1.account }}'
     create_home: '{{ voms_create_user_dir }}'
+  loop: '{{ gridsite_supported_vos_data_list | subelements("pool_accounts", "skip_missing=True") }}'
 
-  loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True")}}'
-  when:
-    item.1.description == 'SW manager'
-  register: _grid_users
-
-# Expends grid_user list with items from _grid_users.results when name is defined
-- name: Expends grid_user list with items from _grid_users.results when name is defined
-  set_fact:
-    grid_users: "{{ grid_users + _grid_users.results | selectattr('invocation', 'defined') | map(attribute='invocation.module_args') }}"
-
-# Create VOs pilot role account
-- name: Create VO production account
-  user:
-    name: '{{ item.0.account_prefix }}{{ item.1.suffix }}'
-    uid: '{{ item.0.base_uid +  2 }}'
-    group: '{{ item.0.name }}'
-    state: present
-    comment: 'VO {{ item.0.name }} - {{ item.1.description }} account'
-    shell: /bin/bash
-    home: '/home/{{ item.0.account_prefix }}{{ item.1.suffix }}'
-    create_home: '{{ voms_create_user_dir }}'
-
-  loop: '{{ supported_vos_data_list | subelements("voms_mappings", "skip_missing=True")}}'
-  when: item.1.description == 'pilot'
-  register: _grid_users
-
-# Expends grid_user list with items from _grid_users.results when name is defined
-- name: Expends grid_user list with items from _grid_users.results when name is defined
-  set_fact:
-    grid_users: "{{ grid_users + (_grid_users.results | selectattr('invocation', 'defined') | map(attribute='invocation.module_args')) }}"
-
-
-# debug print grid_users
-- name: debug print grid_users
+# debug print items in gridsite_supported_vos_data_list
+- name: Debug print items in gridsite_supported_vos_data_list
   debug:
-    msg: "{{ grid_users }}"
+    msg: "{{ item }}"
+  loop: '{{ gridsite_supported_vos_data_list | subelements("voms_mappings", "skip_missing=True")}}'
+
+# Create VO roles pool accounts
+# As subelement of subelement can't work, use task. 
+- name: Create VO roles pool accounts
+  include_tasks: 'tasks/voms-role-accounts.yml'
+  loop: '{{ gridsite_supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
+  loop_control:
+    loop_var: '_voms_mapping'

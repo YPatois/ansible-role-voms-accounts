@@ -7,21 +7,21 @@
     owner: "root"
     group: "root"
   loop:
-    - "{{ vomsdir_dir }}"
-    - "{{ vomses_dir }}"
+    - "{{ voms_vomsdir_dir }}"
+    - "{{ voms_vomses_dir }}"
 
 - name: Create LSC directories
   file:
-    path: "{{ vomsdir_dir }}/{{ item }}"
+    path: "{{ voms_vomsdir_dir }}/{{ item }}"
     state: directory
     mode: 0755
     owner: "root"
     group: "root"
-  loop: "{{ supported_vos }}"
+  loop: "{{ gridsite_supported_vos }}"
 
 - name: Ensure LSC files present
   copy:
-    dest: "{{ vomsdir_dir }}/{{ item.0.name }}/{{ item.1.name }}.lsc"
+    dest: "{{ voms_vomsdir_dir }}/{{ item.0.name }}/{{ item.1.name }}.lsc"
     content: |
       {{ item.1.DN  }}
       {{ item.1.CA_DN }}
@@ -29,7 +29,7 @@
     owner: "root"
     group: "root"
   loop:
-    "{{ supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
+    "{{ gridsite_supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
   when: 
     item.1.DN is defined
 
@@ -39,7 +39,7 @@
 # Path is /etc/vomsdir/vo-name/voms-host.lsc
 - name: Ensure vomses files present
   copy:
-    dest: "{{ vomses_dir }}/{{ item.0.name }}-{{ item.1.name }}"
+    dest: "{{ voms_vomses_dir }}/{{ item.0.name }}-{{ item.1.name }}"
     content: >
       "{{ item.0.name }}" "{{ item.1.host }}" "{{ item.1.port }}" "{{ item.1..DN }}"
       "{{ item.0.name }}"
@@ -47,6 +47,6 @@
     owner: "root"
     group: "root"
   loop:
-    "{{ supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
+    "{{ gridsite_supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
   when: 
     item.voms_servers.DN is defined
