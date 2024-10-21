@@ -1,19 +1,6 @@
 ---
 # Called from tasks/voms-accounts.yml
 
-# debug print _voms_mapping
-- name: Debug print _voms_mapping
-  debug:
-    msg: "{{ _voms_mapping.1 }}"
-
-
-# debug print _voms_mapping subelements items
-- name: Debug print _voms_mapping subelements items
-  debug: 
-    msg: "{{ item.1 }}"
-  loop: "{{ _voms_mapping | subelements('pool_accounts', skip_missing=True) }}" 
-
-
 # Iterates over a VO to create pool accounts
 - name: Create pool accounts
   user:

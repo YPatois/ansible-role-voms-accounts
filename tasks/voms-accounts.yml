@@ -37,12 +37,6 @@
     create_home: '{{ voms_create_user_dir }}'
   loop: '{{ gridsite_supported_vos_data_list | subelements("pool_accounts", "skip_missing=True") }}'
 
-# debug print items in gridsite_supported_vos_data_list
-- name: Debug print items in gridsite_supported_vos_data_list
-  debug:
-    msg: "{{ item }}"
-  loop: '{{ gridsite_supported_vos_data_list | subelements("voms_mappings", "skip_missing=True")}}'
-
 # Create VO roles pool accounts
 # As subelement of subelement can't work, use task. 
 - name: Create VO roles pool accounts
@@ -50,3 +44,16 @@
   loop: '{{ gridsite_supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
   loop_control:
     loop_var: '_voms_mapping'
+
+# Create local users accounts
+- name: Create local users accounts
+  user:
+    name: '{{ item.account }}'
+    uid: '{{ item.uid }}'
+    group: '{{ item.group }}'
+    comment: 'Local user {{ item.comment }}'
+    shell: /bin/bash
+    home: '/home-pbs/{{ item.account }}'
+    create_home: false
+    state: present
+  loop: '{{ gridsite_local_users }}'

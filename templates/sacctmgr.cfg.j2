@@ -31,3 +31,8 @@ User - '{{ vo.account_prefix }}{{ mapping.suffix }}':DefaultAccount='{{ mapping.
 {% endfor %}
 
 {% endfor %}
+
+{% for user in  gridsite_local_users %}
+Parent - '{{ user.group }}'
+User - '{{ user.account }}':DefaultAccount='{{ user.group }}':Fairshare=parent
+{% endfor %}
