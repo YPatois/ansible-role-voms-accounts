@@ -1,0 +1,10 @@
+#!/bin/bash 
+# slurm_reservations.j2
+
+{%  for wn in slurm_nodelist %}
+# Reserved CPUs: 20% of total
+{% set fWN = wn.CPUs | int * 0.2 | int %}
+scontrol create reservation account=ops       duration=infinite CoreCnt=1             Nodes={{ wn.NodeName }} starttime=now flags=magnetic PartitionName=ops       ReservationName={{ wn.NodeName }}_ops
+scontrol create reservation account=sbg_local duration=infinite CoreCnt={{ fWN - 1 }} Nodes={{ wn.NodeName }} starttime=now flags=magnetic PartitionName=sbg_local ReservationName={{ wn.NodeName }}_sbg_local
+
+{% endfor %}
