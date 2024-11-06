@@ -15,10 +15,10 @@
 # Add reservations
 - name: Create shell script
   template:
-    src: slurm-reservations.sh.j2
-    dest: /tmp/slurm-reservations.sh
+    src: slurm_reservations.sh.j2
+    dest: /tmp/slurm_reservations.sh
     mode: 0755
 
 # Set reservations
 - name: Set reservations
-  shell: /tmp/slurm-reservations.sh
+  shell: /tmp/slurm_reservations.sh

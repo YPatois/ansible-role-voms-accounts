@@ -1,0 +1,13 @@
+#!/bin/bash 
+# slurm_reservations.j2
+
+{%  for wn in slurm_nodelist %}
+# Reserved CPUs: 20% of total : FIXME : exact value may have to be tuned, having multiple of 8 remaining cores may be useful
+{% set fWN = (wn.CPUs | float * 0.2) | int %}
+scontrol del reservation {{ wn.NodeName.split('.')[0] }}_ops
+scontrol del reservation {{ wn.NodeName.split('.')[0] }}_sbg_local
+scontrol create reservation account=ops       duration=infinite CoreCnt=1             Nodes={{ wn.NodeName }} starttime=now flags=magnetic PartitionName=ops       ReservationName={{ wn.NodeName.split('.')[0] }}_ops
+{% if fWN > 1 %}
+scontrol create reservation account=vo.sbg.in2p3.fr duration=infinite CoreCnt={{ fWN - 1 }} Nodes={{ wn.NodeName }} starttime=now flags=magnetic PartitionName=sbg_local ReservationName={{ wn.NodeName.split('.')[0] }}_sbg_local
+{% endif %}
+{% endfor %}
