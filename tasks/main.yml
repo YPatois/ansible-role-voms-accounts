@@ -7,7 +7,7 @@
 - name: Configure voms accounts
   include_tasks: 'voms-accounts.yml'
   when:
-    - "'ce_arc' in group_names or 'grid_wn' in group_names"
+    - "voms_create_accounts is defined and ('ce_arc' in group_names or 'grid_wn' in group_names)"
 
 # Slurm configuration
 - name: Configure slurm
