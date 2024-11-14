@@ -10,11 +10,6 @@
     state: present
   loop: '{{ gridsite_supported_vos_data_list }}'
 
-# debug print gridsite_supported_vos_data_list
-- name: Debug print gridsite_supported_vos_data_list
-  debug:
-    msg: "{{ gridsite_supported_vos_data_list }}"
-
 
 # Create VO subgroups
 - name: Create VO subgroups
