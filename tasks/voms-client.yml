@@ -19,6 +19,10 @@
     group: "root"
   loop: "{{ gridsite_supported_vos }}"
 
+# LSC files should have the format:
+# certificate DN
+# CA signing authority
+# Path is /etc/vomsdir/vo-name/voms-host.lsc
 - name: Ensure LSC files present
   copy:
     dest: "{{ voms_vomsdir_dir }}/{{ item.0.name }}/{{ item.1.name }}.lsc"
@@ -33,15 +37,12 @@
   when: 
     item.1.DN is defined
 
-# LSC files should have the format:
-# certificate DN
-# CA signing authority
-# Path is /etc/vomsdir/vo-name/voms-host.lsc
+# VOMSes files
 - name: Ensure vomses files present
   copy:
     dest: "{{ voms_vomses_dir }}/{{ item.0.name }}-{{ item.1.name }}"
     content: >
-      "{{ item.0.name }}" "{{ item.1.host }}" "{{ item.1.port }}" "{{ item.1..DN }}"
+      "{{ item.0.name }}" "{{ item.1.host }}" "{{ item.1.port }}" "{{ item.1.DN }}"
       "{{ item.0.name }}"
     mode: 0644
     owner: "root"
@@ -49,4 +50,4 @@
   loop:
     "{{ gridsite_supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
   when: 
-    item.voms_servers.DN is defined
+    item.1.DN is defined
