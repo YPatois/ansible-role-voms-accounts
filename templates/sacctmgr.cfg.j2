@@ -9,7 +9,7 @@ Account - '{{ vo.name }}':Description='VO group for {{ vo.name }} vo':Organizati
 {% endif %}
 {% for mapping in vo.roles %}
 Parent - '{{ vo.name }}'
-Account - '{{ mapping.group }}':Description='Role {{mapping.description}}  for VO {{ vo.name }} vo':Fairshare=parent
+Account - '{{ mapping.group }}':Description='Role {{mapping.name}}  for VO {{ vo.name }} vo':Fairshare=parent
 {% endfor %}
 
 {% endfor %}

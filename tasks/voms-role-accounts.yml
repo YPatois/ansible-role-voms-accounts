@@ -8,7 +8,7 @@
     uid: '{{ item.1.uid }}'
     group: '{{ item.0.group }}'
     groups: '{{ _roles_data.0.group }}'
-    comment: 'VO {{ _roles_data.0.group }} Role {{ _roles_data.1.description }} pool account user'
+    comment: 'VO {{ _roles_data.0.group }} Role {{ _roles_data.1.name }} pool account user'
     home: '/home/{{ item.1.account }}'
     shell: '/bin/bash'
     create_home: '{{ voms_create_user_dir }}'
