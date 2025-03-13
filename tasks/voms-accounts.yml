@@ -17,7 +17,7 @@
     name: '{{ item.1.group }}'
     gid: '{{ item.1.gid }}'
     state: present
-  loop: '{{ gridsite_supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
+  loop: '{{ gridsite_supported_vos_data_list | subelements("roles", "skip_missing=True") }}'
  
 # Create VO pool accounts
 - name: Create VO main pool accounts
@@ -36,9 +36,9 @@
 # As subelement of subelement can't work, use task. 
 - name: Create VO roles pool accounts
   include_tasks: 'tasks/voms-role-accounts.yml'
-  loop: '{{ gridsite_supported_vos_data_list | subelements("voms_mappings", "skip_missing=True") }}'
+  loop: '{{ gridsite_supported_vos_data_list | subelements("roles", "skip_missing=True") }}'
   loop_control:
-    loop_var: '_voms_mapping'
+    loop_var: '_roles_data'
 
 # Create local users accounts
 - name: Create local users accounts

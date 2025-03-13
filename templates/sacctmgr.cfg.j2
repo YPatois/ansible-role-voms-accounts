@@ -7,7 +7,7 @@ Account - '{{ vo.name }}':Description='VO group for {{ vo.name }} vo':Organizati
 {% else %}
 Account - '{{ vo.name }}':Description='VO group for {{ vo.name }} vo':Organization='{{ vo.name }}':Fairshare=1
 {% endif %}
-{% for mapping in vo.voms_mappings %}
+{% for mapping in vo.roles %}
 Parent - '{{ vo.name }}'
 Account - '{{ mapping.group }}':Description='Role {{mapping.description}}  for VO {{ vo.name }} vo':Fairshare=parent
 {% endfor %}
@@ -22,7 +22,7 @@ Parent - '{{ vo.name }}'
 User - '{{ user.account }}':DefaultAccount='{{ vo.name }}':Fairshare=parent
 {% endfor %}
 
-{% for mapping in vo.voms_mappings %}
+{% for mapping in vo.roles %}
 Parent - '{{ mapping.group }}'
 {% for user in mapping.pool_accounts %}
 User - '{{ vo.account_prefix }}{{ mapping.suffix }}':DefaultAccount='{{ mapping.group }}':Fairshare=parent
