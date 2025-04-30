@@ -25,7 +25,7 @@
 # Path is /etc/vomsdir/vo-name/voms-host.lsc
 - name: Ensure LSC files present
   copy:
-    dest: "{{ voms_vomsdir_dir }}/{{ item.0.name }}/{{ item.1.name }}.lsc"
+    dest: "{{ voms_vomsdir_dir }}/{{ item.0.name }}/{{ item.1.hostname }}.lsc"
     content: |
       {{ item.1.DN  }}
       {{ item.1.CA_DN }}
@@ -33,21 +33,21 @@
     owner: "root"
     group: "root"
   loop:
-    "{{ gridsite_supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
+    "{{ gridsite_supported_vos_data_list | subelements('voms', 'skip_missing=True')  }}"
   when: 
     item.1.DN is defined
 
 # VOMSes files
 - name: Ensure vomses files present
   copy:
-    dest: "{{ voms_vomses_dir }}/{{ item.0.name }}-{{ item.1.name }}"
+    dest: "{{ voms_vomses_dir }}/{{ item.0.name }}-{{ item.1.hostname }}"
     content: >
-      "{{ item.0.name }}" "{{ item.1.host }}" "{{ item.1.port }}" "{{ item.1.DN }}"
+      "{{ item.0.name }}" "{{ item.1.hostname }}" "{{ item.1.port }}" "{{ item.1.DN }}"
       "{{ item.0.name }}"
     mode: 0644
     owner: "root"
     group: "root"
   loop:
-    "{{ gridsite_supported_vos_data_list | subelements('voms_servers', 'skip_missing=True')  }}"
+    "{{ gridsite_supported_vos_data_list | subelements('voms', 'skip_missing=True')  }}"
   when: 
     item.1.DN is defined
