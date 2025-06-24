@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Yannick Patois <yannick.patois@iphc.cnrs.fr>
   description: A role to manage VOMS roles.
