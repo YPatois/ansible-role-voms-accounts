@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Yannick Patois <yannick.patois@iphc.cnrs.fr>
+  description: A role to manage VOMS roles.
+  license: Apache 2.0
+  min_ansible_version: 2.1
+  platforms:
+  - name: RHEL
+    versions:
+    - 9
+  - name: Almalinux
+    versions:
+    - 9
+#dependencies:
+#  - { role: 'umd', release: 4 }
+#  - { role: 'grid-security' }
