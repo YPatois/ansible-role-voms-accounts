@@ -1,50 +1,17 @@
 ---
-# Common variables
-- name: Get supported VOs info
-  include_vars:
-    file: vars/supported_vos.yaml
- 
-- name: Get all the VOMS info
-  include_vars:
-    file: "files/data.yml"
-    name: vo_voms
-
-# Restricts request to supported VO if defined
-- name: Set VOMS data query
-  set_fact:
-    voms_data_query: "data[?{{ [\"name == '\"] | product(supported_vos) | map(\"join\") | product([\"'\"]) | map(\"join\") | join(\"||\") }}]"
-  when: supported_vos is defined
-
-# User list
-- name: Get user list
-  include_vars:
-    file: 'vars/user_list.yaml'
-
-# Group list
-- name: Get group list
-  include_vars:
-    file: 'vars/group_list.yaml'
-
-# Dict of supported VOs
-- name: Get supported VOs
-  set_fact:
-    supported_vos_dict: '{{ vo_voms | json_query(voms_data_query) }}'
-
 # Client configuration
 - name: Configure voms client
-  include_tasks: voms-client.yml
-  tags:
-    - all
-
-# Gridmap configuration
-- name: Configure voms gridmap
-  include_tasks: voms-gridmap.yml
-  tags:
-    - ce_arc
+  include_tasks: 'voms-client.yml'
 
 # Account configuration
 - name: Configure voms accounts
-  include_tasks: voms-accounts.yml
-  tags:
-    - ce_arc
-    - grid_wn
+  include_tasks: 'voms-accounts.yml'
+  when:
+    - "voms_create_accounts is defined and ('ce_arc' in group_names or 'grid_wn' in group_names)"
+
+# Slurm configuration
+- name: Configure slurm
+  include_tasks: 'voms-slurm.yml'
+  when:
+    - "'ce_arc' in group_names"
+

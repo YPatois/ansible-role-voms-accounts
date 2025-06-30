@@ -1,0 +1,38 @@
+Cluster - '{{ slurm_sitename }}':Fairshare=1:QOS='normal'
+# VO groups
+{% for vo in gridsite_supported_vos_data_list %}
+Parent - 'root'
+{% if vo.fairshare is defined %}
+Account - '{{ vo.name }}':Description='VO group for {{ vo.name }} vo':Organization='{{ vo.name }}':Fairshare= {{ vo.fairshare }}
+{% else %}
+Account - '{{ vo.name }}':Description='VO group for {{ vo.name }} vo':Organization='{{ vo.name }}':Fairshare=1
+{% endif %}
+{% for mapping in vo.roles %}
+Parent - '{{ vo.name }}'
+Account - '{{ mapping.group }}':Description='Role {{mapping.name}}  for VO {{ vo.name }} vo':Fairshare=parent
+{% endfor %}
+
+{% endfor %}
+
+# User pools
+{% for vo in gridsite_supported_vos_data_list %}
+# For {{ vo.name }}
+Parent - '{{ vo.name }}'
+{% for user in vo.pool_accounts %}
+User - '{{ user.account }}':DefaultAccount='{{ vo.name }}':Fairshare=parent
+{% endfor %}
+
+{% for mapping in vo.roles %}
+Parent - '{{ mapping.group }}'
+{% for user in mapping.pool_accounts %}
+User - '{{ vo.account_prefix }}{{ mapping.suffix }}':DefaultAccount='{{ mapping.group }}':Fairshare=parent
+{% endfor %}
+
+{% endfor %}
+
+{% endfor %}
+
+{% for user in  gridsite_local_users %}
+Parent - '{{ user.group }}'
+User - '{{ user.account }}':DefaultAccount='{{ user.group }}':Fairshare=parent
+{% endfor %}

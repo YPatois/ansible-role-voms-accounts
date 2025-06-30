@@ -1,5 +1,4 @@
 ---
-
 - name: Ensure Required VOMS directories
   file:
     path: "{{ item }}"
@@ -8,51 +7,47 @@
     owner: "root"
     group: "root"
   loop:
-    - "{{ vomsdir_dir }}"
-    - "{{ vomses_dir }}"
+    - "{{ voms_vomsdir_dir }}"
+    - "{{ voms_vomses_dir }}"
 
 - name: Create LSC directories
   file:
-    path: "{{ vomsdir_dir }}/{{ item }}"
+    path: "{{ voms_vomsdir_dir }}/{{ item }}"
     state: directory
     mode: 0755
     owner: "root"
     group: "root"
-  loop: "{{ vo_voms | json_query(voms_data_query~'.name') }}"
+  loop: "{{ gridsite_supported_vos }}"
 
 # LSC files should have the format:
 # certificate DN
 # CA signing authority
 # Path is /etc/vomsdir/vo-name/voms-host.lsc
-
-- name: Print variables
-  debug:
-    msg: "Supported VOs : {{ supported_vos }}"
-  when: supported_vos is defined
 - name: Ensure LSC files present
   copy:
-    dest: "{{ vomsdir_dir }}/{{ item.name }}/{{ item.hostname }}.lsc"
+    dest: "{{ voms_vomsdir_dir }}/{{ item.0.name }}/{{ item.1.hostname }}.lsc"
     content: |
-      {{ item.DN }}
-      {{ item.CA_DN }}
+      {{ item.1.DN  }}
+      {{ item.1.CA_DN }}
     mode: 0644
     owner: "root"
     group: "root"
   loop:
-    "{{ vo_voms | json_query(voms_data_query) | subelements('voms') | to_json |
-    from_json | json_query('[*].{name: [0].name, hostname: [1].hostname, DN:
-    [1].DN, CA_DN: [1].CA_DN}') }}"
+    "{{ gridsite_supported_vos_data_list | subelements('voms', 'skip_missing=True')  }}"
+  when: 
+    item.1.DN is defined
 
+# VOMSes files
 - name: Ensure vomses files present
   copy:
-    dest: "{{ vomses_dir }}/{{ item.name }}-{{ item.hostname }}"
+    dest: "{{ voms_vomses_dir }}/{{ item.0.name }}-{{ item.1.hostname }}"
     content: >
-      "{{ item.name }}" "{{ item.hostname }}" "{{ item.port }}" "{{ item.DN }}"
-      "{{ item.name }}"
+      "{{ item.0.name }}" "{{ item.1.hostname }}" "{{ item.1.port }}" "{{ item.1.DN }}"
+      "{{ item.0.name }}"
     mode: 0644
     owner: "root"
     group: "root"
   loop:
-    "{{ vo_voms | json_query(voms_data_query) | subelements('voms') | to_json |
-    from_json | json_query('[*].{name: [0].name, hostname: [1].hostname, DN:
-    [1].DN, port: [1].port}') }}"
+    "{{ gridsite_supported_vos_data_list | subelements('voms', 'skip_missing=True')  }}"
+  when: 
+    item.1.DN is defined

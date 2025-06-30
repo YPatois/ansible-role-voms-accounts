@@ -1,0 +1,27 @@
+#!/bin/bash 
+# slurm_reservations.j2
+
+
+function create_reservation {
+    # Test if reservation already exists: FIXME: if we need to modify the reservation, this would have to be changed
+    # however, as immediate reservation often fails (see the workaround below), it's safer not to touch existing ones
+    # when we can.
+    scontrol show reservation $5
+    if ([ $? -eq 0 ]); then
+        return 0
+    fi
+    # scontrol del reservation $5
+    scontrol create reservation account=$1 duration=infinite CoreCnt=$2 Nodes=$3 starttime=now flags=magnetic PartitionName=$4 ReservationName=$5
+    if ([ $? -eq 0 ]); then
+        scontrol create reservation account=$1 duration=infinite CoreCnt=$2 Nodes=$3 starttime=now+3days flags=magnetic PartitionName=$4 ReservationName=$5
+    fi
+    return 0
+}
+
+
+{%  for wn in slurm_nodelist %}
+# Reserved CPUs: 20% of total : FIXME : exact value may have to be tuned, having multiple of 8 remaining cores may be useful
+{% set fWN = (wn.CPUs | float * 0.2) | int %}
+create_reservation ops 1 {{ wn.NodeName }} ops {{ wn.NodeName.split('.')[0] }}_ops
+create_reservation vo.sbg.in2p3.fr {{ fWN }} {{ wn.NodeName }} sbg_local {{ wn.NodeName.split('.')[0] }}_sbg_local
+{% endfor %}

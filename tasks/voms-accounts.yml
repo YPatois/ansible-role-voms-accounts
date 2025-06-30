@@ -2,23 +2,53 @@
 # FIXME: in /etc/login.defs UID_MAX and GID_MAX where manually set
 # as the default is only 60000.
 
-# Create groups
-- name: Create groups
+# Create VO main groups
+- name: Create vo groups
   group:
-    name: '{{ item.name }}'
+    name: '{{ item.group }}'
     gid: '{{ item.gid }}'
     state: present
-  loop: '{{ grid_groups }}'
+  loop: '{{ gridsite_supported_vos_data_list }}'
 
-# Create accounts
-- name: Create accounts
+
+# Create VO subgroups
+- name: Create VO subgroups
+  group:
+    name: '{{ item.1.group }}'
+    gid: '{{ item.1.gid }}'
+    state: present
+  loop: '{{ gridsite_supported_vos_data_list | subelements("roles", "skip_missing=True") }}'
+ 
+# Create VO pool accounts
+- name: Create VO main pool accounts
   user:
-    name: '{{ item.name }}'
-    password: '**NP**'
+    name: '{{ item.1.account }}'
+    uid: '{{ item.1.uid }}'
+    group: '{{ item.0.group }}'
+    state: present
+    comment: 'VO {{ item.0.name }} pool account'
+    shell: /bin/bash
+    home: '/home/{{ item.1.account }}'
+    create_home: '{{ voms_create_user_dir }}'
+  loop: '{{ gridsite_supported_vos_data_list | subelements("pool_accounts", "skip_missing=True") }}'
+
+# Create VO roles pool accounts
+# As subelement of subelement can't work, use task. 
+- name: Create VO roles pool accounts
+  include_tasks: 'tasks/voms-role-accounts.yml'
+  loop: '{{ gridsite_supported_vos_data_list | subelements("roles", "skip_missing=True") }}'
+  loop_control:
+    loop_var: '_roles_data'
+
+# Create local users accounts
+- name: Create local users accounts
+  user:
+    name: '{{ item.account }}'
     uid: '{{ item.uid }}'
     group: '{{ item.group }}'
-    groups: '{{ item.groups }}'
-    home: '/home/{{ item.name }}'
-    shell: '/bin/bash'
-    create_home: '{{ voms_create_user_dir }}'
-  loop: '{{ grid_users }}'
+    comment: 'Local user {{ item.comment }}'
+    shell: /bin/bash
+    home: '/home-pbs/{{ item.account }}'
+    create_home: false
+    state: present
+  loop: '{{ gridsite_local_users }}'
