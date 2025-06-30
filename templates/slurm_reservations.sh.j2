@@ -23,5 +23,5 @@ function create_reservation {
 # Reserved CPUs: 20% of total : FIXME : exact value may have to be tuned, having multiple of 8 remaining cores may be useful
 {% set fWN = (wn.CPUs | float * 0.2) | int %}
 create_reservation ops 1 {{ wn.NodeName }} ops {{ wn.NodeName.split('.')[0] }}_ops
-create_reservation vo.sbg.in2p3.fr {{ fWN }} {{ wn.NodeName }} sbg_local {{ wn.NodeName.split('.')[0] }}_sbg_local
+create_reservation vo.scigne.fr {{ fWN }} {{ wn.NodeName }} sbg_local {{ wn.NodeName.split('.')[0] }}_sbg_local
 {% endfor %}
