@@ -3,7 +3,7 @@
 # (because it's where we deal with aaccounts)
 
 # Configure slurm sacctmgr with relevant users and groups
-- name: Create config file
+- name: Create sacctmgr config file
   template:
     src: sacctmgr.cfg.j2
     dest: /tmp/sacctmgr.cfg
@@ -13,12 +13,12 @@
   shell: sacctmgr -i load /tmp/sacctmgr.cfg
 
 # Add reservations
-- name: Create shell script
+- name: Create shell script for slurm reservations
   template:
     src: slurm_reservations.sh.j2
     dest: /tmp/slurm_reservations.sh
     mode: 0755
 
 # Set reservations
-- name: Set reservations
+- name: Set reservations for slurm
   shell: /tmp/slurm_reservations.sh
