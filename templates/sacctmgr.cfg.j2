@@ -25,7 +25,7 @@ User - '{{ user.account }}':DefaultAccount='{{ vo.name }}':Fairshare=parent
 {% for mapping in vo.roles %}
 Parent - '{{ mapping.group }}'
 {% for user in mapping.pool_accounts %}
-User - '{{ vo.account_prefix }}{{ mapping.suffix }}':DefaultAccount='{{ mapping.group }}':Fairshare=parent
+User - '{{ user.account }}':DefaultAccount='{{ mapping.group }}':Fairshare=parent
 {% endfor %}
 
 {% endfor %}
