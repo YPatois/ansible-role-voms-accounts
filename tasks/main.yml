@@ -1,4 +1,10 @@
 ---
+# Delete all voms accounts
+- name: Delete voms accounts
+  include_tasks: 'delete-all-voms-accounts.yml'
+  when:
+    - "voms_delete_accounts is defined and ('ce_arc' in group_names or 'grid_wn' in group_names)"
+
 # Client configuration
 - name: Configure voms client
   include_tasks: 'voms-client.yml'

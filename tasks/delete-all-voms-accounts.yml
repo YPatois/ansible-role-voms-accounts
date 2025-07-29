@@ -1,0 +1,42 @@
+---
+# FIXME: the 10000/12000 threshold is quite arbitrary
+
+# Select VOMS groups 
+- name: Get group information
+  ansible.builtin.getent:
+    database: group
+
+- name: Define query to filter gid > 10000 and exclude 'nobody'
+  set_fact:
+    gquery: "[?to_number(value[1]) > `10000` && key != 'nobody'].key"
+
+- name: Create list of groups with gid > 10000 excluding 'nobody'
+  set_fact:
+    tbd_voms_groups: "{{ getent_group | dict2items | json_query(gquery) }}"
+
+# Select VOMS users
+- name: Get user information
+  ansible.builtin.getent:
+    database: passwd
+
+- name: Define query to filter uid > 12000 and exclude 'nobody'
+  set_fact:
+    uquery: "[?to_number(value[1]) > `12000` && key != 'nobody'].key"
+
+- name: Create list of users with uid > 12000 excluding 'nobody'
+  set_fact:
+    tbd_voms_users: "{{ getent_passwd | dict2items | json_query(uquery) }}"
+
+# Delete VOMS users
+- name: Delete VOMS users
+  user:
+    name: '{{ item }}'
+    state: absent
+  loop: "{{ tbd_voms_users }}"
+
+# Delete VOMS groups
+- name: Delete VOMS groups
+  group:
+    name: '{{ item }}'
+    state: absent
+  loop: "{{ tbd_voms_groups }}"
