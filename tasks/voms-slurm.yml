@@ -8,6 +8,8 @@
     src: sacctmgr.cfg.j2
     dest: /tmp/sacctmgr.cfg
 
+# FIXME: Remove old configuration ?
+
 # Load configuration  in sacctmgr
 - name: Load configuration in sacctmgr
   shell: sacctmgr -i load /tmp/sacctmgr.cfg
@@ -18,6 +20,8 @@
     src: slurm_reservations.sh.j2
     dest: /tmp/slurm_reservations.sh
     mode: 0755
+
+# FIXME: Remove old reservations ?
 
 # Set reservations
 - name: Set reservations for slurm
