@@ -34,6 +34,13 @@
     state: absent
   loop: "{{ tbd_voms_users }}"
 
+# Delete local users
+- name: Delete local users
+  user:
+    name: '{{ item.account }}'
+    state: absent
+  loop: "{{ gridsite_local_users }}"
+
 # Delete VOMS groups
 - name: Delete VOMS groups
   group:
