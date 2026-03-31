@@ -1,0 +1,13 @@
+---
+# Create local users accounts
+- name: Create local users accounts
+  user:
+    name: '{{ item.account }}'
+    uid: '{{ item.uid }}'
+    group: '{{ item.group }}'
+    comment: 'Local user {{ item.comment }}'
+    shell: /bin/bash
+    home: '/home-pbs/{{ item.account }}'
+    create_home: false
+    state: present
+  loop: '{{ gridsite_local_users }}'
