@@ -1,6 +1,11 @@
 ---
 # Called from tasks/voms-accounts.yml
 
+# Debug print _roles_data
+#- name: Debug print _roles_data
+#  debug:
+#    msg: "{{ _roles_data }}"
+
 # Iterates over a VO to create pool accounts
 - name: Create pool accounts
   user:
