@@ -1,6 +1,21 @@
 ---
-# FIXME: in /etc/login.defs UID_MAX and GID_MAX where manually set
-# as the default is only 60000.
+# Set UID_MAX
+- name: Set UID_MAX in /etc/login.defs
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: '^UID_MAX'
+    line: 'UID_MAX                 200000'
+    state: present
+    backup: yes
+
+# Set GID_MAX
+- name: Set GID_MAX in /etc/login.defs
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: '^GID_MAX'
+    line: 'GID_MAX                 200000'
+    state: present
+    backup: yes
 
 # Create VO main groups
 - name: Create vo groups
@@ -10,6 +25,17 @@
     state: present
   loop: '{{ gridsite_supported_vos_data_list }}'
 
+# Debug print gridsite_supported_vos_data_list
+#- name: Debug print gridsite_supported_vos_data_list
+#  debug:
+#    msg: "{{ gridsite_supported_vos_data_list }}"
+
+# Debug print VO subgroups
+#- name: Debug print _role_pool_accounts
+#  debug:
+#    msg: "{{ item.1.group }}"
+#    msg: "{{ item.1.gid }}"
+#  loop: '{{ gridsite_supported_vos_data_list | subelements("roles", "skip_missing=True") }}'
 
 # Create VO subgroups
 - name: Create VO subgroups
@@ -18,7 +44,8 @@
     gid: '{{ item.1.gid }}'
     state: present
   loop: '{{ gridsite_supported_vos_data_list | subelements("roles", "skip_missing=True") }}'
- 
+  when: item.1.gid is defined
+
 # Create VO pool accounts
 - name: Create VO main pool accounts
   user:
