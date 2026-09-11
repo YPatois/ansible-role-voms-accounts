@@ -1,4 +1,20 @@
 ---
+# Local user home should be created, but only once
+# The CE will do that.
+
+# Set create_local_users_home to false
+- name: Set create_local_users_home to false
+  set_fact:
+    create_local_users_home: false
+
+# Set create_local_users_home to true only for CE
+- name: Set create_local_users_home to true only for CE
+  set_fact:
+    create_local_users_home: true
+  when:
+    - "'ce_arc' in group_names"
+  
+
 # Create local users accounts
 - name: Create local users accounts
   user:
@@ -8,6 +24,6 @@
     comment: 'Local user {{ item.comment }}'
     shell: /bin/bash
     home: '/home-pbs/{{ item.account }}'
-    create_home: false
+    create_home: '{{ create_local_users_home }}'
     state: present
   loop: '{{ gridsite_local_users }}'
