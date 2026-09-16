@@ -1,0 +1,6 @@
+Cluster - '{{ slurm_sitename }}':Fairshare=1:QOS='normal'
+
+{% for user in  gridsite_local_users %}
+Parent - '{{ user.group }}'
+User - '{{ user.account }}':DefaultAccount='{{ user.group }}':Fairshare=parent
+{% endfor %}

@@ -27,3 +27,15 @@
     create_home: '{{ create_local_users_home }}'
     state: present
   loop: '{{ gridsite_local_users }}'
+
+# If only_local_users is true, fill a simplified sacctmgr list to configure local users only
+- name: Create sacctmgr localusers config file
+  template:
+    src: sacctmgr_localusers.cfg.j2
+    dest: /tmp/sacctmgr_localusers.cfg
+  when: only_local_users
+
+# Load configuration  in sacctmgr
+- name: Load configuration in sacctmgr
+  shell: sacctmgr -i load /tmp/sacctmgr_localusers.cfg
+  when: only_local_users
